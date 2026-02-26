@@ -1,1 +1,1 @@
-v1.0
+v1.1|Discord Token Checker Eklendi!|Server Joiner Hataları Giderildi!|Tasarım İyileştirildi.
