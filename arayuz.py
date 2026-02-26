@@ -90,24 +90,48 @@ class SplashScreen(QWidget):
     def start_full_update(self):
         self.label.setText("DOSYALAR İNDİRİLİYOR...")
         try:
-            # 1. Ana dosyayı güncelle
-            main_code = requests.get(f"{RAW_BASE_URL}/arayuz.py").text
+            # 1. Ana Dosyayı Güncelle (arayuz.py)
+            main_url = f"{RAW_BASE_URL}/arayuz.py"
+            main_code = requests.get(main_url, timeout=10).text
+            
+            # Kendi çalıştığı dosyayı (arayuz.py) günceller
             with open(__file__, "w", encoding="utf-8") as f:
                 f.write(main_code)
 
-            # 2. Features klasörünü güncelle
-            if not os.path.exists("features"): os.makedirs("features")
-            feature_files = ["discord_login.py", "webhook.py", "checker.py", "rpc.py", "joiner.py"]
+            # 2. Features Klasörünü Güncelle
+            if not os.path.exists("features"):
+                os.makedirs("features")
+            
+            # Güncellenmesini istediğin tüm dosyaların listesi
+            # Buraya yeni bir dosya eklersen (örn: spammer.py) adını buraya da ekle
+            feature_files = [
+                "discord_login.py", 
+                "webhook.py", 
+                "checker.py", 
+                "rpc.py", 
+                "joiner.py"
+            ]
+            
             for file_name in feature_files:
-                f_content = requests.get(f"{RAW_BASE_URL}/features/{file_name}").text
-                with open(f"features/{file_name}", "w", encoding="utf-8") as f:
-                    f.write(f_content)
+                self.label.setText(f"GÜNCELLENİYOR:\n{file_name}")
+                file_url = f"{RAW_BASE_URL}/features/{file_name}"
+                
+                f_response = requests.get(file_url, timeout=10)
+                if f_response.status_code == 200:
+                    with open(f"features/{file_name}", "w", encoding="utf-8") as f:
+                        f.write(f_response.text)
+                else:
+                    print(f"Uyarı: {file_name} dosyası GitHub'da bulunamadı.")
 
-            self.label.setText("BAŞARIYLA GÜNCELLENDİ!\nYeniden Başlatılıyor...")
+            self.label.setText("HER ŞEY GÜNCEL!\nYeniden Başlatılıyor...")
+            
+            # 3. Programı Kapat ve Yeni Sürümü Aç
             QTimer.singleShot(2000, lambda: subprocess.Popen([sys.executable, __file__]))
             QTimer.singleShot(2100, sys.exit)
+
         except Exception as e:
-            self.label.setText(f"HATA: {e}")
+            self.label.setText(f"GÜNCELLEME HATASI!")
+            print(f"Detaylı Hata: {e}")
 
     def open_key_system(self):
         self.key_win = KeySystem()
@@ -359,4 +383,5 @@ if __name__ == "__main__":
     app.setStyleSheet("QWidget { outline: none; }")
     splash = SplashScreen()
     splash.show()
+
     sys.exit(app.exec())
