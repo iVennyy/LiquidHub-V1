@@ -9,7 +9,7 @@ from PyQt6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QHBoxLayout,
                              QFrame, QScrollArea, QStackedWidget, QGridLayout, QLineEdit)
 
 # --- ⚙️ AYARLAR ---
-VERSION = "v1.0"
+VERSION = "v1.1"
 # Kendi GitHub linklerini buraya yapıştır
 RAW_BASE_URL = "https://raw.githubusercontent.com/iVennyy/LiquidHub-V1/main"
 GITHUB_VERSION_URL = f"{RAW_BASE_URL}/version.txt"
@@ -385,3 +385,4 @@ if __name__ == "__main__":
     splash.show()
 
     sys.exit(app.exec())
+
